@@ -1,23 +1,13 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #121212;
+    margin: 0;
+    background-color: #111;
     color: #fff;
+    font-family: 'Arial';
     text-align: center;
-    padding: 2rem;
   }
   
-  button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #00c853;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 2rem;
-  }
-  
-  button:hover {
-    background-color: #00e676;
+  #game canvas {
+    display: block;
+    margin: 0 auto;
   }
   
