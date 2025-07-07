@@ -25,13 +25,16 @@ class StartScene extends Phaser.Scene {
   preload() {
     this.load.image('bg', 'assets/background.png');
     this.load.audio('bgMusic', 'assets/sounds/bgMusic.mp3');
-    this.load.audio('click', 'assets/sounds/click.wav');
+    this.load.audio('click', 'assets/click.wav');
   }
   create() {
     window.clickSound = this.sound.add('click');
-    this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
+    if (!window.bgMusic) {
+      window.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
+    }
+    window.bgMusic.play();
     
-    this.add.image(400, 225, 'bg');
+    this.add.image(4000, 100, 'bg');
     this.add.text(400, 200, 'SCHOOL YEAR SIMULATOR', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
     this.add.text(400, 260, 'Press SPACE to start', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
   
@@ -39,7 +42,6 @@ class StartScene extends Phaser.Scene {
       // Resume audio context here, then play sounds
       this.sound.context.resume().then(() => {
         window.clickSound = this.sound.add('click');
-        this.bgMusic.play();
         playClickSound()
         this.scene.start('GameScene');
       });
@@ -98,7 +100,7 @@ class GameScene extends Phaser.Scene {
     chaos = 0;
     this.gameEnded = false;
 
-    this.add.image(400, 225, 'bg').setScrollFactor(1, 0);
+    this.add.image(2550, 220, 'bg').setScrollFactor(1, 0);
 
     const platforms = this.physics.add.staticGroup();
     for (let x = 0; x <= 6000; x += 400) {
@@ -106,7 +108,7 @@ class GameScene extends Phaser.Scene {
     }
 
     this.player = this.physics.add.sprite(100, 360, 'player');
-    this.player.setScale(2);
+    this.player.setScale(5);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
 
@@ -136,13 +138,13 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, platforms);
 
 
-    this.createEventZone(600, 460, 'quiz');
-    this.createEventZone(1200, 460, 'fight');
-    this.createEventZone(1800, 460, 'fire');
-    this.createEventZone(2400, 460, 'detention');
-    this.createEventZone(3000, 460, 'snowday');
-    this.createEventZone(3600, 460, 'hackathon');
-    this.createEventZone(4200, 460, 'prom');
+    this.createEventZone(350, 460, 'quiz');
+    this.createEventZone(800, 460, 'fight');
+    this.createEventZone(1350, 460, 'fire');
+    this.createEventZone(1900, 460, 'detention');
+    this.createEventZone(2570, 460, 'snowday');
+    this.createEventZone(3280, 460, 'hackathon');
+    this.createEventZone(4000, 460, 'prom');
     this.createEventZone(4800, 460, 'legend');
 
     gpaText = this.add.text(16, 16, 'GPA: 4.00', { fontSize: '18px', fill: '#fff' }).setScrollFactor(0);
@@ -178,10 +180,10 @@ class GameScene extends Phaser.Scene {
     if (this.gameEnded) return;
 
     if (cursors.left.isDown) {
-      this.player.setVelocityX(-160);
+      this.player.setVelocityX(-320);
       this.player.anims.play('left', true);
     } else if (cursors.right.isDown) {
-      this.player.setVelocityX(160);
+      this.player.setVelocityX(320);
       this.player.anims.play('right', true);
     } else {
       this.player.setVelocityX(0);
