@@ -130,9 +130,9 @@ function triggerEvent() {
 
   appDiv.innerHTML = `
     <h3>A cafeteria fight breaks out!</h3>
-    <button onclick="chooseEvent('Shield with Chromebook')">Use Chromebook</button>
+    <button onclick="chooseEvent('Shield with Chromebook')">Use Chromebook as weapon</button>
     <br><br>
-    <button onclick="chooseEvent('Summon Band Kids')">Call Band Kids</button>
+    <button onclick="chooseEvent('Summon Band Kids')">Summon Band Kids</button>
     <br><br>
     <button onclick="chooseEvent('Cry under the table')">Cry</button>
   `;
@@ -144,7 +144,7 @@ function chooseEvent(option) {
   
   switch (option) {
     case 'Shield with Chromebook':
-      resultText = "You blocked a chicken nugget. Your screen shattered.";
+      resultText = "You blocked a chicken nugget. Your screen shattered. 0.2 GPA activity";
       gpa -= 0.2;
       break;
 
