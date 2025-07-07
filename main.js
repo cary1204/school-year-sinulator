@@ -28,8 +28,8 @@ class StartScene extends Phaser.Scene {
     this.load.audio('click', 'assets/sounds/click.wav');
   }
   create() {
-    this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
     window.clickSound = this.sound.add('click');
+    this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
     
     this.add.image(400, 225, 'bg');
     this.add.text(400, 200, 'SCHOOL YEAR SIMULATOR', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
