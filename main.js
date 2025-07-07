@@ -25,10 +25,12 @@ class StartScene extends Phaser.Scene {
   preload() {
     this.load.image('bg', 'assets/background.png');
     this.load.audio('bgMusic', 'assets/sounds/bgMusic.mp3');
+    this.load.audio('click', 'assets/sounds/click.wav');
   }
   create() {
     this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
-  
+    window.clickSound = this.sound.add('click');
+    
     this.add.image(400, 225, 'bg');
     this.add.text(400, 200, 'SCHOOL YEAR SIMULATOR', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
     this.add.text(400, 260, 'Press SPACE to start', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
@@ -36,8 +38,9 @@ class StartScene extends Phaser.Scene {
     this.input.keyboard.once('keydown-SPACE', () => {
       // Resume audio context here, then play sounds
       this.sound.context.resume().then(() => {
-        playClickSound()
+        window.clickSound = this.sound.add('click');
         this.bgMusic.play();
+        playClickSound()
         this.scene.start('GameScene');
       });
     });
@@ -103,25 +106,28 @@ class GameScene extends Phaser.Scene {
     }
 
     this.player = this.physics.add.sprite(100, 360, 'player');
+    this.player.setScale(2);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
 
+    this.textures.get('player').setFilter(Phaser.Textures.FilterMode.NEAREST);
+
     this.anims.create({
       key: 'left',
-      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 4 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
       frameRate: 10,
       repeat: -1
     });
 
     this.anims.create({
       key: 'turn',
-      frames: [{ key: 'player', frame: 5 }],
+      frames: [{ key: 'player', frame: 4 }],
       frameRate: 20
     });
 
     this.anims.create({
       key: 'right',
-      frames: this.anims.generateFrameNumbers('player', { start: 6, end: 9 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
       frameRate: 10,
       repeat: -1
     });
@@ -228,11 +234,11 @@ class GameScene extends Phaser.Scene {
 }
 
 function playClickSound() {
-  const scene = game.scene.getScene('GameScene');
-  if (scene && scene.clickSound) {
-    scene.clickSound.play();
+  if (window.clickSound) {
+    window.clickSound.play();
   }
 }
+
 
 function triggerEvent(type) {
   const scene = game.scene.getScene('GameScene');
@@ -242,7 +248,7 @@ function triggerEvent(type) {
   let html = '';
   switch (type) {
     case 'quiz':
-      html = `<h3>Surprise Pop Quiz! You weren’t ready.</h3>
+      html = `<h3>Surprise Pop Quiz! You were not ready.</h3>
         <button onclick="playClickSound(); chooseEvent('Copy off smart kid')">Copy off smart kid</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Panic and guess')">Guess all C</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Bribe teacher with gum')">Offer gum to teacher</button><br><br>
@@ -250,17 +256,17 @@ function triggerEvent(type) {
       break;
     case 'fight':
       html = `<h3>A cafeteria fight breaks out!</h3>
-        <button onclick="playClickSound(); chooseEvent('Shield with Chromebook')">Use Chromebook</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Summon Band Kids')">Call Band Kids</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Shield with Chromebook')">Use Chromebook as a weapon</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Summon Band Kids')">Summon Band Kids</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Cry under the table')">Cry</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Start filming')">Record it for clout</button>`;
+        <button onclick="playClickSound(); chooseEvent('Start filming')">Record it</button>`;
       break;
     case 'fire':
-      html = `<h3>Fire drill! But… it’s raining.</h3>
-        <button onclick="playClickSound(); chooseEvent('Run outside anyway')">Little rain won’t hurt me</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Hide in janitor’s closet')">Hide in janitor's closet</button><br><br>
+      html = `<h3>Fire drill! But… it is raining.</h3>
+        <button onclick="playClickSound(); chooseEvent('Run outside anyway')">Little rain wont hurt me</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Hide in janitors closet')">Hide in janitor's closet</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Yell FIRE back at the alarm')">Yell "FIRE" and scream back at the alarm</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Start a party')">Start a party</button>`;
+        <button onclick="playClickSound(); chooseEvent('Start a party')">Start a party/rave</button>`;
       break;
     case 'detention':
       html = `<h3>You got detention!</h3>
@@ -270,16 +276,16 @@ function triggerEvent(type) {
         <button onclick="playClickSound(); chooseEvent('Do homework during')">Actually study</button>`;
       break;
     case 'snowday':
-      html = `<h3>It’s a snow day, but you came to school.</h3>
+      html = `<h3>It is a snow day! but you came to school.</h3>
         <button onclick="playClickSound(); chooseEvent('Build indoor snowman')">Snowman in the hall</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Declare yourself principal')">You’re in charge now</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Declare yourself principal')">Youre in charge</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Throw snowballs in class')">Snowball fight</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Ask for homework')">Study</button>`;
       break;
     case 'hackathon':
       html = `<h3>School hackathon!</h3>
-        <button onclick="playClickSound(); chooseEvent('Build cheating robot')">Robot cheater</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Crash school servers')">Crash it all</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Build cheating robot')">Steal last year's champion's robot</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Crash school servers')">Attack school's server</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Win fairly')">Win it legit</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Let AI write your code')">Let AI write your code</button>`;
       break;
@@ -293,7 +299,7 @@ function triggerEvent(type) {
     case 'legend':
       html = `<h3>You’re about to graduate...</h3>
         <button onclick="playClickSound(); chooseEvent('Stage Dive')">Stage dive at ceremony</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Give Real Speech')">Give emotional speech</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Give Real Speech')">Give speech</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Hug principal')">Hug the principal</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Sleep through ceremony')">Sleep through ceremony</button>`;
       break;
@@ -319,19 +325,19 @@ function chooseEvent(option) {
   let resultText = '';
 
   switch (option) {
-    case 'Copy off smart kid': resultText = "Nice! But they noticed. Suspicion spreads."; gpa += 0.2; chaos += 1; break;
+    case 'Copy off smart kid': resultText = "Nice! But they noticed. Suspicion spreads..."; gpa += 0.2; chaos += 1; break;
     case 'Panic and guess': resultText = "All Cs? You somehow passed."; gpa += 0.1; break;
-    case 'Bribe teacher with gum': resultText = "They took it. You gained weird favor."; popularity += 3; chaos += 2; break;
-    case 'Sleep through it': resultText = "You wake up to everyone turning in their papers."; gpa -= 0.3; break;
+    case 'Bribe teacher with gum': resultText = "They took it. You gained weird favor..."; popularity += 3; chaos += 1; break;
+    case 'Sleep through it': resultText = "You wake up to everyone turning in their papers! oh no"; gpa -= 0.3; break;
 
-    case 'Shield with Chromebook': resultText = "You blocked a chicken nugget. Your screen shattered. 0.2 gpa activity"; gpa -= 0.2; break;
-    case 'Summon Band Kids': resultText = "They charged with trombones. You became a local hero."; popularity += 5; chaos += 1; break;
-    case 'Cry under the table': resultText = "The janitor fist bumps you in solidarity."; chaos += 2; break;
+    case 'Shield with Chromebook': resultText = "You blocked a chicken nugget. Your screen shattered. 0.2 gpa activity"; gpa -= 0.3; break;
+    case 'Summon Band Kids': resultText = "They charged with trombones. You became a local hero."; popularity += 5; chaos += 3; break;
+    case 'Cry under the table': resultText = "Cry under the table, The janitor fist bumps you in solidarity."; chaos += 2; break;
     case 'Start filming': resultText = "You got likes, but missed class."; gpa -= 0.3; popularity += 2; break;
 
     case 'Run outside anyway': resultText = "You’re soaked. But heroic."; popularity += 2; break;
-    case 'Hide in janitor’s closet': resultText = "You found a mop sword. +1 strange power."; chaos += 3; break;
-    case 'Yell FIRE back at the alarm': resultText = "The alarm stopped. You win. (???)"; chaos += 5; break;
+    case 'Hide in janitor’s closet': resultText = "You found a mop sword. +1 strange power."; chaos += 2; break;
+    case 'Yell FIRE back at the alarm': resultText = "The alarm stopped. You win. (???)"; chaos += 4; break;
     case 'Start a party': resultText = "CHAOS EVERYWHERE."; popularity += 2; gpa -= 0.2; chaos += 5; break;
 
     case 'Escape through vent': resultText = "You’re a ninja now."; chaos += 4; gpa -= 0.3; break;
@@ -349,31 +355,31 @@ function chooseEvent(option) {
     case 'Win fairly': resultText = "Nerd glory achieved."; gpa += 0.3; popularity += 1; break;
     case 'Let AI write your code': resultText = "uh oh, ai is paid serive and youre broke"; gpa -= 0.5; break;
 
-    case 'Spike the punch': resultText = "The party went wild."; chaos += 5; break;
-    case 'Dance battle teacher': resultText = "Teacher respect +5."; popularity += 5; break;
-    case 'Steal spotlight': resultText = "You were seen, for better or worse."; popularity += 3; chaos += 2; break;
+    case 'Spike the punch': resultText = "CRAZY, CHAO!!!!"; popularity += 5; chaos += 5; break;
+    case 'Dance battle teacher': resultText = "YOU COOKED THE TEACHER!!!"; popularity += 5; chaos += 1;break;
+    case 'Steal spotlight': resultText = "Great dance, everyone loves it"; popularity += 3; chaos += 2; break;
     case 'Rap battle someone': resultText = "You got clapped but had fun."; chaos += 3; break;
 
-    case 'Stage Dive': resultText = "Crowd surfing legend."; popularity += 5; chaos += 4; break;
-    case 'Give Real Speech': resultText = "Tears everywhere."; popularity += 2; gpa += 0.2; break;
-    case 'Hug principal': resultText = "Respect earned from administration."; popularity += 3; break;
-    case 'Sleep through ceremony': resultText = "You missed everything."; gpa -= 0.5; break;
+    case 'Stage Dive': resultText = "You became a Legend, people started telling your stories"; popularity += 5; chaos += 4; break;
+    case 'Give Real Speech': resultText = "W Speech"; popularity += 2; gpa += 0.2; break;
+    case 'Hug principal': resultText = "Awkward, But Repect+"; popularity += 3; break;
+    case 'Sleep through ceremony': resultText = "You graduated through... E-mail?"; gpa -= 0.5; break;
   }
 
   gpa = Math.min(Math.max(gpa, 0), 4.0);
   popularity = Math.max(popularity, 0);
   chaos = Math.max(chaos, 0);
 
-  alert(resultText);
-
-  // Remove popup
-  const popup = document.getElementById('eventPopup');
-  if (popup) popup.remove();
-
-  // Resume game
-  const scene = game.scene.getScene('GameScene');
-  scene.physics.resume();
+  document.getElementById('eventPopup').innerHTML = `<p>${resultText}</p><br><button onclick="playClickSound(); closeEvent()">Continue</button>`;
 }
+
+function closeEvent() {
+  document.getElementById('eventPopup').remove();
+  game.scene.scenes[1].physics.resume(); //gc scr1
+}
+
+window.chooseEvent = chooseEvent;
+window.closeEvent = closeEvent;
 
 const config = {
   type: Phaser.AUTO,
