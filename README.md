@@ -44,9 +44,9 @@ Every decision leads to meme-worthy consequences, and the ending summary tells y
 
 ---
 
-## 👀 Screenshots
+## 👀 Screenshots/GIF
 
-none yet :p
+
 
 ---
 
