@@ -24,7 +24,8 @@ class StartScene extends Phaser.Scene {
     super({ key: 'StartScene' });
   }
   preload() {
-    this.load.audio('click', 'assets/click.wav');
+    this.load.image('bg', 'assets/background.png');
+    this.load.audio('click', 'assets/sounds/click.wav');
     this.load.audio('bgMusic', 'assets/sounds/bgMusic.mp3');
   }
   create() {
@@ -151,10 +152,10 @@ class GameScene extends Phaser.Scene {
       }
 
       if (e.key === 'd' && devEnabled) {
-        this.clickSound = this.sound.add('click');
-        this.clickSound.play();
         showDev = !showDev;
         devText.setText('Dev Mode: ' + (showDev ? 'ON' : 'OFF'));
+        this.clickSound = this.sound.add('click');
+        this.clickSound.play();
       }
     });
 
@@ -206,6 +207,12 @@ class GameScene extends Phaser.Scene {
   }
 }
 
+function playClickSound() {
+  const sound = document.getElementById('clickSound');
+  sound.currentTime = 0; // rewind to start if already playing
+  sound.play();
+}
+
 function createEventZone(scene, x, y, type) {
   const zone = scene.add.zone(x, y, 100, 100);
   scene.physics.world.enable(zone);
@@ -230,59 +237,59 @@ function triggerEvent(type) {
   switch (type) {
     case 'quiz':
       html = `<h3>Surprise Pop Quiz! You weren’t ready.</h3>
-        <button onclick="chooseEvent('Copy off smart kid')">Copy off smart kid</button><br><br>
-        <button onclick="chooseEvent('Panic and guess')">Guess all C</button><br><br>
-        <button onclick="chooseEvent('Bribe teacher with gum')">Offer gum to teacher</button><br><br>
-        <button onclick="chooseEvent('Sleep through it')">Sleep through it</button>`;
+        <button onclick="playClickSound(); chooseEvent('Copy off smart kid')">Copy off smart kid</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Panic and guess')">Guess all C</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Bribe teacher with gum')">Offer gum to teacher</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Sleep through it')">Sleep through it</button>`;
       break;
     case 'fight':
       html = `<h3>A cafeteria fight breaks out!</h3>
-        <button onclick="chooseEvent('Shield with Chromebook')">Use Chromebook</button><br><br>
-        <button onclick="chooseEvent('Summon Band Kids')">Call Band Kids</button><br><br>
-        <button onclick="chooseEvent('Cry under the table')">Cry</button><br><br>
-        <button onclick="chooseEvent('Start filming')">Record it for clout</button>`;
+        <button onclick="playClickSound(); chooseEvent('Shield with Chromebook')">Use Chromebook</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Summon Band Kids')">Call Band Kids</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Cry under the table')">Cry</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Start filming')">Record it for clout</button>`;
       break;
     case 'fire':
       html = `<h3>Fire drill! But… it’s raining.</h3>
-        <button onclick="chooseEvent('Run outside anyway')">Little rain won’t hurt me</button><br><br>
-        <button onclick="chooseEvent('Hide in janitor’s closet')">Hide in janitor's closet</button><br><br>
-        <button onclick="chooseEvent('Yell FIRE back at the alarm')">Yell "FIRE" and screem back at the alarm</button><br><br>
-        <button onclick="chooseEvent('Start a party')">Start a party</button>`;
+        <button onclick="playClickSound(); chooseEvent('Run outside anyway')">Little rain won’t hurt me</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Hide in janitor’s closet')">Hide in janitor's closet</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Yell FIRE back at the alarm')">Yell "FIRE" and screem back at the alarm</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Start a party')">Start a party</button>`;
       break;
     case 'detention':
       html = `<h3>You got detention!</h3>
-        <button onclick="chooseEvent('Escape through vent')">Escape through vent</button><br><br>
-        <button onclick="chooseEvent('Serve it like a boss')">Own it and serve</button><br><br>
-        <button onclick="chooseEvent('Fake illness')">Pretend to faint</button><br><br>
-        <button onclick="chooseEvent('Do homework during')">Actually study</button>`;
+        <button onclick="playClickSound(); chooseEvent('Escape through vent')">Escape through vent</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Serve it like a boss')">Own it and serve</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Fake illness')">Pretend to faint</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Do homework during')">Actually study</button>`;
       break;
     case 'snowday':
       html = `<h3>It’s a snow day, but you came to school.</h3>
-        <button onclick="chooseEvent('Build indoor snowman')">Snowman in the hall</button><br><br>
-        <button onclick="chooseEvent('Declare yourself principal')">You’re in charge now</button><br><br>
-        <button onclick="chooseEvent('Throw snowballs in class')">Snowball fight</button><br><br>
-        <button onclick="chooseEvent('Ask for homework')">Study</button>`;
+        <button onclick="playClickSound(); chooseEvent('Build indoor snowman')">Snowman in the hall</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Declare yourself principal')">You’re in charge now</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Throw snowballs in class')">Snowball fight</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Ask for homework')">Study</button>`;
       break;
     case 'hackathon':
       html = `<h3>School hackathon!</h3>
-        <button onclick="chooseEvent('Build cheating robot')">Robot cheater</button><br><br>
-        <button onclick="chooseEvent('Crash school servers')">Crash it all</button><br><br>
-        <button onclick="chooseEvent('Win fairly')">Win it legit</button><br><br>
-        <button onclick="chooseEvent('Let AI write your code')">Let AI write your code</button>`;
+        <button onclick="playClickSound(); chooseEvent('Build cheating robot')">Robot cheater</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Crash school servers')">Crash it all</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Win fairly')">Win it legit</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Let AI write your code')">Let AI write your code</button>`;
       break;
     case 'prom':
       html = `<h3>Prom night chaos!</h3>
-        <button onclick="chooseEvent('Spike the punch')">Spike the punch</button><br><br>
-        <button onclick="chooseEvent('Dance battle teacher')">Dance-off</button><br><br>
-        <button onclick="chooseEvent('Steal spotlight')">Steal spotlight</button><br><br>
-        <button onclick="chooseEvent('Rap battle someone')">Rap battle someone</button>`;
+        <button onclick="playClickSound(); chooseEvent('Spike the punch')">Spike the punch</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Dance battle teacher')">Dance-off</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Steal spotlight')">Steal spotlight</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Rap battle someone')">Rap battle someone</button>`;
       break;
     case 'legend':
       html = `<h3>You’re about to graduate...</h3>
-        <button onclick="chooseEvent('Stage Dive')">Stage dive at ceremony</button><br><br>
-        <button onclick="chooseEvent('Give Real Speech')">Give emotional speech</button><br><br>
-        <button onclick="chooseEvent('Hug principal')">Hug the principal</button><br><br>
-        <button onclick="chooseEvent('Sleep through ceremony')">Sleep through ceremony</button>`;
+        <button onclick="playClickSound(); chooseEvent('Stage Dive')">Stage dive at ceremony</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Give Real Speech')">Give emotional speech</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Hug principal')">Hug the principal</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Sleep through ceremony')">Sleep through ceremony</button>`;
       break;
   }
 
@@ -351,12 +358,12 @@ function chooseEvent(option) {
   popText.setText('Popularity: ' + popularity);
   chaosText.setText('Chaos: ' + chaos);
 
-  document.getElementById('eventPopup').innerHTML = `<p>${resultText}</p><br><button onclick="closeEvent()">Continue</button>`;
+  document.getElementById('eventPopup').innerHTML = `<p>${resultText}</p><br><button onclick="playClickSound(); closeEvent()">Continue</button>`;
 }
 
 function closeEvent() {
   document.getElementById('eventPopup').remove();
-  game.scene.scenes[1].physics.resume(); //gc scr1
+  game.scene.scenes[1].physics.resume(); //gc
 }
 
 window.chooseEvent = chooseEvent;
