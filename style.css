@@ -11,3 +11,10 @@ body {
     margin: 0 auto;
   }
   
+  #eventPopup button {
+    padding: 10px;
+    font-size: 1rem;
+    margin: 5px;
+    cursor: pointer;
+  }
+  
