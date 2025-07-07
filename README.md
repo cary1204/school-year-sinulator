@@ -50,6 +50,10 @@ none yet :p
 
 ---
 
+## 📃 Credits
+
+pixel art character: elvgames (https://elvgames.itch.io/free-retro-game-world-sprites)
+
 ## 🙃 Disclaimer
 
 This is a joke simulator.  
