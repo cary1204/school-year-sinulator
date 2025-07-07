@@ -1,3 +1,4 @@
+// Global stats variables
 let gpa = 4.0;
 let popularity = 0;
 let chaos = 0;
@@ -15,9 +16,7 @@ const konamiCode = [
   'b', 'a'
 ];
 
-let player;
 let cursors;
-let eventZones = [];
 
 class StartScene extends Phaser.Scene {
   constructor() {
@@ -25,33 +24,38 @@ class StartScene extends Phaser.Scene {
   }
   preload() {
     this.load.image('bg', 'assets/background.png');
-    this.load.audio('click', 'assets/sounds/click.wav');
     this.load.audio('bgMusic', 'assets/sounds/bgMusic.mp3');
   }
   create() {
     this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
-    this.bgMusic.play();
+  
     this.add.image(400, 225, 'bg');
     this.add.text(400, 200, 'SCHOOL YEAR SIMULATOR', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
     this.add.text(400, 260, 'Press SPACE to start', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
-
+  
     this.input.keyboard.once('keydown-SPACE', () => {
-      this.clickSound = this.sound.add('click');
-      this.clickSound.play();
-      this.scene.start('GameScene');
+      // Resume audio context here, then play sounds
+      this.sound.context.resume().then(() => {
+        playClickSound()
+        this.bgMusic.play();
+        this.scene.start('GameScene');
+      });
     });
   }
 }
+
 
 class EndScene extends Phaser.Scene {
   constructor() {
     super({ key: 'EndScene' });
   }
+
   init(data) {
     this.finalGPA = data.gpa;
     this.finalPopularity = data.popularity;
     this.finalChaos = data.chaos;
   }
+
   create() {
     this.add.text(400, 150, 'GAME OVER', { fontSize: '40px', fill: '#fff' }).setOrigin(0.5);
     this.add.text(400, 220, `Final GPA: ${this.finalGPA.toFixed(2)}`, { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
@@ -61,8 +65,7 @@ class EndScene extends Phaser.Scene {
     this.add.text(400, 370, 'Press R to Restart', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
 
     this.input.keyboard.once('keydown-R', () => {
-      this.clickSound = this.sound.add('click');
-      this.clickSound.play();
+      this.sound.play('click');
       this.scene.start('StartScene');
     });
   }
@@ -72,6 +75,8 @@ class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameScene' });
     this.gameEnded = false;
+    this.eventZones = [];
+    this.clickSound = null;
   }
 
   preload() {
@@ -79,12 +84,12 @@ class GameScene extends Phaser.Scene {
     this.load.image('ground', 'assets/platform.png');
     this.load.spritesheet('player', 'assets/player.png', {
       frameWidth: 32,
-      frameHeight: 48
+      frameHeight: 32
     });
+    this.load.audio('click', 'assets/sounds/click.wav');
   }
 
   create() {
-    //rs game start
     gpa = 4.0;
     popularity = 0;
     chaos = 0;
@@ -97,42 +102,42 @@ class GameScene extends Phaser.Scene {
       platforms.create(x, 568, 'ground').setScale(1).refreshBody();
     }
 
-    player = this.physics.add.sprite(100, 360, 'player');
-    player.setBounce(0.2);
-    player.setCollideWorldBounds(true);
+    this.player = this.physics.add.sprite(100, 360, 'player');
+    this.player.setBounce(0.2);
+    this.player.setCollideWorldBounds(true);
 
     this.anims.create({
       key: 'left',
-      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 4 }),
       frameRate: 10,
       repeat: -1
     });
 
     this.anims.create({
       key: 'turn',
-      frames: [{ key: 'player', frame: 4 }],
+      frames: [{ key: 'player', frame: 5 }],
       frameRate: 20
     });
 
     this.anims.create({
       key: 'right',
-      frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
+      frames: this.anims.generateFrameNumbers('player', { start: 6, end: 9 }),
       frameRate: 10,
       repeat: -1
     });
 
     cursors = this.input.keyboard.createCursorKeys();
-    this.physics.add.collider(player, platforms);
+    this.physics.add.collider(this.player, platforms);
 
-    createEventZone(this, 600, 460, 'quiz');
-    createEventZone(this, 1200, 460, 'fight');
-    createEventZone(this, 1800, 460, 'fire');
-    createEventZone(this, 2400, 460, 'detention');
 
-    createEventZone(this, 3000, 460, 'snowday');
-    createEventZone(this, 3600, 460, 'hackathon');
-    createEventZone(this, 4200, 460, 'prom');
-    createEventZone(this, 4800, 460, 'legend');
+    this.createEventZone(600, 460, 'quiz');
+    this.createEventZone(1200, 460, 'fight');
+    this.createEventZone(1800, 460, 'fire');
+    this.createEventZone(2400, 460, 'detention');
+    this.createEventZone(3000, 460, 'snowday');
+    this.createEventZone(3600, 460, 'hackathon');
+    this.createEventZone(4200, 460, 'prom');
+    this.createEventZone(4800, 460, 'legend');
 
     gpaText = this.add.text(16, 16, 'GPA: 4.00', { fontSize: '18px', fill: '#fff' }).setScrollFactor(0);
     popText = this.add.text(16, 40, 'Popularity: 0', { fontSize: '18px', fill: '#fff' }).setScrollFactor(0);
@@ -154,86 +159,87 @@ class GameScene extends Phaser.Scene {
       if (e.key === 'd' && devEnabled) {
         showDev = !showDev;
         devText.setText('Dev Mode: ' + (showDev ? 'ON' : 'OFF'));
-        this.clickSound = this.sound.add('click');
-        this.clickSound.play();
+        playClickSound()
       }
     });
 
     this.cameras.main.setBounds(0, 0, 5100, 600);
     this.physics.world.setBounds(0, 0, 5100, 600);
-    this.cameras.main.startFollow(player);
+    this.cameras.main.startFollow(this.player);
   }
 
   update() {
     if (this.gameEnded) return;
 
     if (cursors.left.isDown) {
-      player.setVelocityX(-160);
-      player.anims.play('left', true);
+      this.player.setVelocityX(-160);
+      this.player.anims.play('left', true);
     } else if (cursors.right.isDown) {
-      player.setVelocityX(160);
-      player.anims.play('right', true);
+      this.player.setVelocityX(160);
+      this.player.anims.play('right', true);
     } else {
-      player.setVelocityX(0);
-      player.anims.play('turn');
+      this.player.setVelocityX(0);
+      this.player.anims.play('turn');
     }
 
-    if (cursors.up.isDown && player.body.touching.down) {
-      player.setVelocityY(-400);
+    if (cursors.up.isDown && this.player.body.touching.down) {
+      this.player.setVelocityY(-400);
     }
 
     if (showDev) {
-      coordText.setText('X: ' + Math.floor(player.x) + '  Y: ' + Math.floor(player.y));
-      eventZones.forEach(zone => {
+      coordText.setText('X: ' + Math.floor(this.player.x) + '  Y: ' + Math.floor(this.player.y));
+      this.eventZones.forEach(zone => {
         if (!zone.debugRect) {
-          zone.debugRect = zone.scene.add.rectangle(zone.x, zone.y, zone.width, zone.height, 0xff0000, 0.4);
+          zone.debugRect = this.add.rectangle(zone.x, zone.y, zone.width, zone.height, 0xff0000, 0.4);
           zone.debugRect.setScrollFactor(1);
         }
         zone.debugRect.setVisible(true);
       });
     } else {
       coordText.setText('');
-      eventZones.forEach(zone => {
+      this.eventZones.forEach(zone => {
         if (zone.debugRect) zone.debugRect.setVisible(false);
       });
     }
 
-    //end
-    if (player.x > 5000) {
+    if (this.player.x > 5000) {
       this.gameEnded = true;
       this.physics.pause();
       this.scene.start('EndScene', { gpa, popularity, chaos });
     }
   }
+
+  createEventZone(x, y, type) {
+    const zone = this.add.zone(x, y, 100, 100);
+    this.physics.world.enable(zone);
+    zone.body.setAllowGravity(false);
+    zone.body.moves = false;
+    zone.triggered = false;
+    zone.type = type;
+    this.eventZones.push(zone);
+
+    this.physics.add.overlap(this.player, zone, () => {
+      if (!zone.triggered) {
+        zone.triggered = true;
+        triggerEvent(type);
+      }
+    }, null, this);
+  }
 }
 
 function playClickSound() {
-  const sound = document.getElementById('clickSound');
-  sound.currentTime = 0; // rewind to start if already playing
-  sound.play();
-}
-
-function createEventZone(scene, x, y, type) {
-  const zone = scene.add.zone(x, y, 100, 100);
-  scene.physics.world.enable(zone);
-  zone.body.setAllowGravity(false);
-  zone.body.moves = false;
-  zone.triggered = false;
-  zone.type = type;
-  eventZones.push(zone);
-  scene.physics.add.overlap(player, zone, () => {
-    if (!zone.triggered) {
-      zone.triggered = true;
-      triggerEvent(type);
-    }
-  }, null, scene);
+  const scene = game.scene.getScene('GameScene');
+  if (scene && scene.clickSound) {
+    scene.clickSound.play();
+  }
 }
 
 function triggerEvent(type) {
-  player.setVelocityX(0);
-  game.scene.scenes[1].physics.pause(); //sc1
-  let html = '';
+  const scene = game.scene.getScene('GameScene');
+  scene.player.setVelocityX(0);
+  scene.physics.pause();
 
+  let html = '';
   switch (type) {
     case 'quiz':
       html = `<h3>Surprise Pop Quiz! You weren’t ready.</h3>
@@ -253,7 +259,7 @@ function triggerEvent(type) {
       html = `<h3>Fire drill! But… it’s raining.</h3>
         <button onclick="playClickSound(); chooseEvent('Run outside anyway')">Little rain won’t hurt me</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Hide in janitor’s closet')">Hide in janitor's closet</button><br><br>
-        <button onclick="playClickSound(); chooseEvent('Yell FIRE back at the alarm')">Yell "FIRE" and screem back at the alarm</button><br><br>
+        <button onclick="playClickSound(); chooseEvent('Yell FIRE back at the alarm')">Yell "FIRE" and scream back at the alarm</button><br><br>
         <button onclick="playClickSound(); chooseEvent('Start a party')">Start a party</button>`;
       break;
     case 'detention':
@@ -293,6 +299,7 @@ function triggerEvent(type) {
       break;
   }
 
+  // Create popup div
   const appDiv = document.createElement('div');
   appDiv.id = 'eventPopup';
   appDiv.style.position = 'absolute';
@@ -343,31 +350,30 @@ function chooseEvent(option) {
     case 'Let AI write your code': resultText = "uh oh, ai is paid serive and youre broke"; gpa -= 0.5; break;
 
     case 'Spike the punch': resultText = "The party went wild."; chaos += 5; break;
-    case 'Dance battle teacher': resultText = "You crushed it."; popularity += 6; break;
-    case 'Steal spotlight': resultText = "All eyes on you."; popularity += 4; chaos += 3; break;
-    case 'Rap battle someone': resultText = "RAP GOD."; popularity += 1; break;
+    case 'Dance battle teacher': resultText = "Teacher respect +5."; popularity += 5; break;
+    case 'Steal spotlight': resultText = "You were seen, for better or worse."; popularity += 3; chaos += 2; break;
+    case 'Rap battle someone': resultText = "You got clapped but had fun."; chaos += 3; break;
 
-    case 'Stage Dive': resultText = "You became a legend, people started to spread your stories."; popularity += 10; chaos += 4; break;
-    case 'Give Real Speech': resultText = "Your words moved the crowd."; popularity += 6; gpa += 0.1; break;
-    case 'Hug principal': resultText = "Awww... that was awkward but kinda sweet."; chaos += 1; break;
-    case 'Sleep through ceremony': resultText = "You graduated... via email?"; gpa -= 0.3; break;
+    case 'Stage Dive': resultText = "Crowd surfing legend."; popularity += 5; chaos += 4; break;
+    case 'Give Real Speech': resultText = "Tears everywhere."; popularity += 2; gpa += 0.2; break;
+    case 'Hug principal': resultText = "Respect earned from administration."; popularity += 3; break;
+    case 'Sleep through ceremony': resultText = "You missed everything."; gpa -= 0.5; break;
   }
 
-  gpa = Math.max(0, Math.min(4.0, parseFloat(gpa.toFixed(2))));
-  gpaText.setText('GPA: ' + gpa.toFixed(2));
-  popText.setText('Popularity: ' + popularity);
-  chaosText.setText('Chaos: ' + chaos);
+  gpa = Math.min(Math.max(gpa, 0), 4.0);
+  popularity = Math.max(popularity, 0);
+  chaos = Math.max(chaos, 0);
 
-  document.getElementById('eventPopup').innerHTML = `<p>${resultText}</p><br><button onclick="playClickSound(); closeEvent()">Continue</button>`;
+  alert(resultText);
+
+  // Remove popup
+  const popup = document.getElementById('eventPopup');
+  if (popup) popup.remove();
+
+  // Resume game
+  const scene = game.scene.getScene('GameScene');
+  scene.physics.resume();
 }
-
-function closeEvent() {
-  document.getElementById('eventPopup').remove();
-  game.scene.scenes[1].physics.resume(); //gc
-}
-
-window.chooseEvent = chooseEvent;
-window.closeEvent = closeEvent;
 
 const config = {
   type: Phaser.AUTO,
@@ -376,7 +382,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 600 },
+      gravity: { y: 1000 },
       debug: false
     }
   },
@@ -385,3 +391,11 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+function updateStats() {
+  if (gpaText) gpaText.setText('GPA: ' + gpa.toFixed(2));
+  if (popText) popText.setText('Popularity: ' + popularity);
+  if (chaosText) chaosText.setText('Chaos: ' + chaos);
+}
+
+setInterval(updateStats, 200);
