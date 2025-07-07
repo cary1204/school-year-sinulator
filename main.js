@@ -1,3 +1,9 @@
+let gpa = 4.0;
+let popularity = 0;
+let chaos = 0;
+
+let gpaText, popText, chaosText;
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -72,6 +78,11 @@ function create() {
 
   this.physics.add.overlap(player, this.eventZone, triggerEvent, null, this);
 
+  // Stat HUD
+  gpaText = this.add.text(16, 16, 'GPA: 4.0', { fontSize: '18px', fill: '#fff' }).setScrollFactor(0);
+  popText = this.add.text(16, 40, 'Popularity: 0', { fontSize: '18px', fill: '#fff' }).setScrollFactor(0);
+  chaosText = this.add.text(16, 64, 'Chaos: 0', { fontSize: '18px', fill: '#fff' }).setScrollFactor(0);
+
 
   this.cameras.main.startFollow(player);
   this.cameras.main.setBounds(0, 0, 1600, 450);
@@ -100,9 +111,9 @@ let eventTriggered = false;
 function triggerEvent() {
   if (eventTriggered) return;
   eventTriggered = true;
-  player.setVelocityX(0); // Stop player movement
+  player.setVelocityX(0); // freeze
 
-  // Freeze world
+  // freeze
   game.scene.scenes[0].physics.pause();
 
   const appDiv = document.createElement('div');
@@ -129,14 +140,36 @@ function triggerEvent() {
 }
 
 function chooseEvent(option) {
-  const resultText = {
-    'Shield with Chromebook': "You blocked a chicken nugget. Your screen shattered.",
-    'Summon Band Kids': "They charged with trombones. You gained +5 respect.",
-    'Cry under the table': "The janitor fist bumps you in solidarity."
-  }[option];
+  let resultText = '';
+  
+  switch (option) {
+    case 'Shield with Chromebook':
+      resultText = "You blocked a chicken nugget. Your screen shattered.";
+      gpa -= 0.2;
+      break;
+
+    case 'Summon Band Kids':
+      resultText = "They charged with trombones. You gained +5 respect.";
+      popularity += 5;
+      chaos += 1;
+      break;
+
+    case 'Cry under the table':
+      resultText = "The janitor fist bumps you in solidarity.";
+      chaos += 2;
+      break;
+  }
+
+  // stats
+  gpa = Math.max(0, Math.min(4.0, parseFloat(gpa.toFixed(2))));
+
+  gpaText.setText('GPA: ' + gpa.toFixed(2));
+  popText.setText('Popularity: ' + popularity);
+  chaosText.setText('Chaos: ' + chaos);
 
   document.getElementById('eventPopup').innerHTML = `<p>${resultText}</p><br><button onclick="closeEvent()">Continue</button>`;
 }
+
 
 function closeEvent() {
   document.getElementById('eventPopup').remove();
