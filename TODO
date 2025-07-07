@@ -1,12 +1,3 @@
-background.png
-
-    Size: 1600 × 450 px
-
-    Type: Full side-scrolling background
-
-    Style: Looping hallway with lockers, maybe a water fountain, wall posters
-
-    - Think of this as your parallax or static background — wide enough for scrolling.
 
 
 platform.png
@@ -20,18 +11,24 @@ platform.png
     - This will repeat across the level, so keep the edges seamless.
 
 
-player.png
 
-    Size: 256 × 48 px (8 frames of 32 × 48)
+background.png
 
-    Frame Size: Each frame is 32 × 48 px
+**"Generate a seamless panoramic pixel art background for a 2D side-scrolling game, resolution 5100x460 pixels. The scene should transition smoothly across 8 school-themed zones from left to right:
 
-    Layout: Horizontal row of 8 frames
+    A pixel art high school classroom with desks, blackboard, and posters (quiz zone),
 
-        Frame Index	        Action
+    A chaotic school cafeteria with scattered tables and a fight breaking out (fight zone),
 
-        0–3	                Walk Left
-        4	                Idle/Turn
-        5–7	                Walk Right
+    A school fire drill with alarm bells, open doors, and students exiting (fire zone),
 
-    - You can reuse the same walk animation in both directions by flipping the sprite if needed.
+    A quiet detention classroom with a clock, single desk, and moody lighting (detention zone),
+
+    A snowy schoolyard with snow-covered trees and kids mid-snowball fight (snowday zone),
+
+    A messy computer lab with laptops, wires, and snacks on desks (hackathon zone),
+
+    A decorated gymnasium with disco lights and prom banners (prom zone),
+
+    A graduation stage with chairs, a podium, and students tossing caps (legend zone).
+    Use vibrant, detailed pixel art, with consistent lighting, cohesive transitions, and a clean retro game vibe."**
