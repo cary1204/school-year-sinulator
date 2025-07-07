@@ -44,12 +44,6 @@ Every decision leads to meme-worthy consequences, and the ending summary tells y
 
 ---
 
-## 👀 Screenshots/GIF
-
-
-
----
-
 ## 📃 Credits
 
 pixel art character: elvgames (https://elvgames.itch.io/free-retro-game-world-sprites)
