@@ -24,14 +24,19 @@ class StartScene extends Phaser.Scene {
     super({ key: 'StartScene' });
   }
   preload() {
-    this.load.image('bg', 'assets/background.png');
+    this.load.audio('click', 'assets/click.wav');
+    this.load.audio('bgMusic', 'assets/sounds/bgMusic.mp3');
   }
   create() {
+    this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
+    this.bgMusic.play();
     this.add.image(400, 225, 'bg');
     this.add.text(400, 200, 'SCHOOL YEAR SIMULATOR', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
     this.add.text(400, 260, 'Press SPACE to start', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
 
     this.input.keyboard.once('keydown-SPACE', () => {
+      this.clickSound = this.sound.add('click');
+      this.clickSound.play();
       this.scene.start('GameScene');
     });
   }
@@ -55,6 +60,8 @@ class EndScene extends Phaser.Scene {
     this.add.text(400, 370, 'Press R to Restart', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
 
     this.input.keyboard.once('keydown-R', () => {
+      this.clickSound = this.sound.add('click');
+      this.clickSound.play();
       this.scene.start('StartScene');
     });
   }
@@ -76,7 +83,7 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
-    // Reset stats on game start
+    //rs game start
     gpa = 4.0;
     popularity = 0;
     chaos = 0;
@@ -144,6 +151,8 @@ class GameScene extends Phaser.Scene {
       }
 
       if (e.key === 'd' && devEnabled) {
+        this.clickSound = this.sound.add('click');
+        this.clickSound.play();
         showDev = !showDev;
         devText.setText('Dev Mode: ' + (showDev ? 'ON' : 'OFF'));
       }
@@ -188,7 +197,7 @@ class GameScene extends Phaser.Scene {
       });
     }
 
-    // End condition - near right end of map
+    //end
     if (player.x > 5000) {
       this.gameEnded = true;
       this.physics.pause();
@@ -215,8 +224,7 @@ function createEventZone(scene, x, y, type) {
 
 function triggerEvent(type) {
   player.setVelocityX(0);
-  game.scene.scenes[1].physics.pause(); // GameScene is scenes[1]
-
+  game.scene.scenes[1].physics.pause(); //sc1
   let html = '';
 
   switch (type) {
@@ -348,7 +356,7 @@ function chooseEvent(option) {
 
 function closeEvent() {
   document.getElementById('eventPopup').remove();
-  game.scene.scenes[1].physics.resume(); // GameScene is scenes[1]
+  game.scene.scenes[1].physics.resume(); //gc scr1
 }
 
 window.chooseEvent = chooseEvent;
